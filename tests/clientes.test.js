@@ -4,7 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
-const rotasClientes = require('../rotas/rotas_cliente'); // Verifique se o caminho está correto
+const rotasClientes = require('../rotas/rotas_cliente'); 
 
 app.use(bodyParser.json());
 app.use('/clientes', rotasClientes);
@@ -13,7 +13,6 @@ describe('Testes para a rota de Clientes', () => {
     let clienteId;
 
     beforeEach(() => {
-        // Resetar o banco de dados antes de cada teste
         const initialDb = {
             produtos: [],
             clientes: [],
@@ -46,20 +45,19 @@ describe('Testes para a rota de Clientes', () => {
                 }
             };
             const response = await request(app).post('/clientes').send(newClient);
-            expect(response.statusCode).toBe(201); // Status de sucesso para criação
+            expect(response.statusCode).toBe(201); 
 
-            // Verificar se o cliente foi criado
             const clientesResponse = await request(app).get('/clientes');
             expect(clientesResponse.statusCode).toBe(200);
             expect(clientesResponse.body).toBeInstanceOf(Array);
             expect(clientesResponse.body.length).toBe(1);
-            clienteId = clientesResponse.body[0].id; // Salvar o ID do cliente criado
+            clienteId = clientesResponse.body[0].id; 
         });
     });
 
     describe('GET /clientes/:id', () => {
         test('Deve retornar um cliente específico', async () => {
-            if (!clienteId) return; // Pular o teste se o cliente não foi criado
+            if (!clienteId) return; 
 
             const response = await request(app).get(`/clientes/${clienteId}`);
             expect(response.statusCode).toBe(200);
@@ -69,7 +67,7 @@ describe('Testes para a rota de Clientes', () => {
 
     describe('PUT /clientes/:id', () => {
         test('Deve atualizar um cliente existente', async () => {
-            if (!clienteId) return; // Pular o teste se o cliente não foi criado
+            if (!clienteId) return; 
 
             const updatedClient = {
                 nome: "Cliente Atualizado",
@@ -87,7 +85,7 @@ describe('Testes para a rota de Clientes', () => {
 
     describe('DELETE /clientes/:id', () => {
         test('Deve excluir um cliente existente', async () => {
-            if (!clienteId) return; // Pular o teste se o cliente não foi criado
+            if (!clienteId) return;
 
             const response = await request(app).delete(`/clientes/${clienteId}`);
             expect(response.statusCode).toBe(204);
