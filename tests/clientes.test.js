@@ -4,7 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
-const rotasClientes = require('../rotas/rotas_clientes'); // Verifique se o caminho está correto
+const rotasClientes = require('../rotas/rotas_cliente'); // Verifique se o caminho está correto
 
 app.use(bodyParser.json());
 app.use('/clientes', rotasClientes);
