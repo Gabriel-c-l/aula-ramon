@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const rotasProduto = require('./rotas/rotas_produto');
-const rotasClientes = require('./rotas/rotas_clientes');
+const rotasClientes = require('./rotas/rotas_cliente');
 
 app.use(bodyParser.json());
 
