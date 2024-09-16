@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const controladorPedidos = require('../controladorPedidos');
+const controladorPedidos = require('../controlador/controladorPedidos');
 
 router.get('/', controladorPedidos.listPedidos);
 router.get('/:id', controladorPedidos.getPedido);
