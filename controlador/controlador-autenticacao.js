@@ -1,6 +1,5 @@
 const { query } = require('express')
 const db = require('../db.json')
-const brypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const login = async (req, res) =>{

@@ -1,0 +1,629 @@
+openapi: 3.0.3
+info:
+  title: API de Clientes, Produtos e Pedidos
+  version: 1.0.0
+  description: API para gerenciar clientes, produtos e pedidos.
+servers:
+  - url: http://localhost:8000
+
+paths:
+  # Autenticação
+  /auth/login:
+    post:
+      summary: Faz o login do cliente e retorna um token JWT.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: cliente@example.com
+                senha:
+                  type: string
+                  example: senha123
+      responses:
+        '200':
+          description: Login bem-sucedido, retorna o token JWT.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Ok
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          description: Erro na solicitação, email ou senha não enviados.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  erro:
+                    type: string
+                    example: 'email ou senha não enviado'
+        '404':
+          description: Cliente não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'not found'
+        '401':
+          description: Senha inválida.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  erro:
+                    type: string
+                    example: 'a senha é invalida'
+
+  /auth/logout:
+    post:
+      summary: Faz o logout do cliente.
+      responses:
+        '200':
+          description: Logout bem-sucedido.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'o usuario fez logout'
+        '401':
+          description: O usuário não está autorizado a fazer logout.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensagem:
+                    type: string
+                    example: 'nao autorizado'
+
+  # Clientes
+  /clientes:
+    get:
+      summary: Lista todos os clientes.
+      responses:
+        '200':
+          description: Retorna uma lista de clientes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    nome:
+                      type: string
+                    email:
+                      type: string
+    post:
+      summary: Cria um novo cliente.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                  example: "Novo Cliente"
+                email:
+                  type: string
+                  example: "novo.cliente@example.com"
+                senha:
+                  type: string
+                  example: "senha123"
+      responses:
+        '201':
+          description: Cliente criado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  nome:
+                    type: string
+                  email:
+                    type: string
+
+  /clientes/{id}:
+    get:
+      summary: Retorna um cliente específico.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do cliente a ser retornado.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cliente encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  nome:
+                    type: string
+                  email:
+                    type: string
+        '404':
+          description: Cliente não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Cliente não encontrado'
+
+    put:
+      summary: Atualiza um cliente existente.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do cliente a ser atualizado.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                email:
+                  type: string
+                senha:
+                  type: string
+      responses:
+        '200':
+          description: Cliente atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  nome:
+                    type: string
+                  email:
+                    type: string
+        '404':
+          description: Cliente não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Cliente não encontrado'
+
+    delete:
+      summary: Exclui um cliente existente.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do cliente a ser excluído.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Cliente excluído com sucesso.
+        '404':
+          description: Cliente não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Cliente não encontrado'
+
+  # Produtos
+  /produtos:
+    get:
+      summary: Lista todos os produtos.
+      responses:
+        '200':
+          description: Retorna uma lista de produtos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    nome:
+                      type: string
+                    descricao:
+                      type: string
+                    preco:
+                      type: number
+                    imagem:
+                      type: string
+    post:
+      summary: Cria um novo produto.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                  example: "Novo Produto"
+                descricao:
+                  type: string
+                  example: "Descrição do novo produto"
+                preco:
+                  type: number
+                  example: 100
+                imagem:
+                  type: string
+                  example: "novo_produto.jpg"
+      responses:
+        '201':
+          description: Produto criado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  nome:
+                    type: string
+                  descricao:
+                    type: string
+                  preco:
+                    type: number
+                  imagem:
+                    type: string
+
+  /produtos/{id}:
+    get:
+      summary: Retorna um produto específico.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do produto a ser retornado.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Produto encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  nome:
+                    type: string
+                  descricao:
+                    type: string
+                  preco:
+                    type: number
+                  imagem:
+                    type: string
+        '404':
+          description: Produto não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Produto não encontrado'
+
+    put:
+      summary: Atualiza um produto existente.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do produto a ser atualizado.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                descricao:
+                  type: string
+                preco:
+                  type: number
+      responses:
+        '200':
+          description: Produto atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  nome:
+                    type: string
+                  descricao:
+                    type: string
+                  preco:
+                    type: number
+        '404':
+          description: Produto não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Produto não encontrado'
+
+    delete:
+      summary: Exclui um produto existente.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do produto a ser excluído.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Produto excluído com sucesso.
+        '404':
+          description: Produto não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Produto não encontrado'
+
+  # Pedidos
+  /pedidos:
+    get:
+      summary: Lista todos os pedidos.
+      responses:
+        '200':
+          description: Retorna uma lista de pedidos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    clienteId:
+                      type: string
+                    produtos:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          quantidade:
+                            type: integer
+                    status:
+                      type: string
+    post:
+      summary: Cria um novo pedido.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                clienteId:
+                  type: string
+                produtos:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      quantidade:
+                        type: integer
+      responses:
+        '201':
+          description: Pedido criado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  clienteId:
+                    type: string
+                  produtos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        quantidade:
+                          type: integer
+                  status:
+                    type: string
+
+  /pedidos/{id}:
+    get:
+      summary: Retorna um pedido específico.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do pedido a ser retornado.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pedido encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  clienteId:
+                    type: string
+                  produtos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        quantidade:
+                          type: integer
+                  status:
+                    type: string
+        '404':
+          description: Pedido não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Pedido não encontrado'
+
+    put:
+      summary: Atualiza um pedido existente.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do pedido a ser atualizado.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                produtos:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      quantidade:
+                        type: integer
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Pedido atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  clienteId:
+                    type: string
+                  produtos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        quantidade:
+                          type: integer
+                  status:
+                    type: string
+        '404':
+          description: Pedido não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Pedido não encontrado'
+
+    delete:
+      summary: Exclui um pedido existente.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do pedido a ser excluído.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Pedido excluído com sucesso.
+        '404':
+          description: Pedido não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'Pedido não encontrado'
